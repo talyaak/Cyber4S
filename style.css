@@ -1,0 +1,41 @@
+h1{
+    font-family: 'Linux Libertine','Georgia','Times',serif;
+    font-size: 188%;
+    font-weight: normal;
+}
+p {
+    font-family: arial;
+    font-size: 100%;
+}
+.container {
+    display: flex;
+    flex-direction: row;
+    row-gap: 5px;
+    width: 100%;
+}
+.content{
+    padding: 10px;
+    border: solid blue 10px;
+    width: 50%;
+    margin-top: 180px;
+    margin-left: 20px;
+    font-size:medium;
+}
+.sidebar{
+    width: 20%;
+    font-size:small;
+    background-color: ;
+}
+ul{
+    font-family: arial;
+    list-style-type: none;
+    margin: 5%;
+    padding: 5%;
+
+}
+img{
+    width:fit-content
+}
+a {
+    text-decoration: none;
+}
