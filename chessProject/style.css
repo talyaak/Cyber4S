@@ -1,0 +1,27 @@
+table {
+	border-collapse: collapse;
+	margin: auto;
+	font-size: 35px;
+}
+table,
+th,
+td {
+	border: 1px solid black;
+	text-align: center;
+}
+.black {
+	color: black;
+	background-color: black;
+}
+.white {
+	color: white;
+	background-color: white;
+}
+h1,
+h2 {
+	text-align: center;
+	font-family: arial;
+}
+.white-bg {
+	background-color: white;
+}
