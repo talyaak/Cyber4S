@@ -1,0 +1,79 @@
+body, html{
+	height: 100%;
+}
+h1{
+    font-family: 'Linux Libertine','Georgia','Times',serif;
+    font-size: 188%;
+    font-weight: normal;
+}
+p {
+    font-family: arial;
+    font-size: 100%;
+}
+
+ul{
+    font-family: arial;
+    list-style-type: none;
+    margin: 5%;
+    padding: 5%;
+}
+img {
+    width:fit-content;
+}
+a {
+    text-decoration: none;
+}
+#searchBar{
+	margin-top: 10px;
+	margin-right: 20px;
+}
+body {
+	margin: 0;
+	display: grid;
+	grid-template-columns: 220px 2fr 1fr 2fr;
+	grid-template-rows: fit-content;
+	grid-template-areas:
+		"sidebar	header	header	header"
+		"sidebar	main		main		sect1"
+		"sidebar	main		main		sect2"
+		"sidebar	main		main		sect3"
+		"sidebar	footer	footer	footer"
+	
+}
+
+aside {
+	grid-area: sidebar;
+	background-color: #F7F7F7;
+	font-size: smaller;
+}
+
+header {
+	grid-area: header;
+	height: 100px;
+	background-color: #F6F6F6;
+	display: flex;
+	justify-content: end;
+}
+
+section:nth-of-type(1) {
+	grid-area: sect1;
+	background-color: #FEFEFE;
+	margin-top: 50px;
+}
+section:nth-of-type(2) {
+	grid-area: sect2;
+	background-color: #FEFEFE;
+}
+section:nth-of-type(3) {
+	grid-area: sect3;
+	background-color: #FEFEFE;
+}
+main {
+	grid-area: main;
+	background-color: #FEFEFE;
+	margin: 10px;
+}
+footer {
+	grid-area: footer;
+	background-color: #FEFEFE;
+}
