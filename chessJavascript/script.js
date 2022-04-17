@@ -40,6 +40,7 @@ function createBoard() {
     }    
 }
 
+
 // // Creating a text introduction, a 'div' element: head_text
 // // the 'div' is a parent element of 'h1':firstLine
 // // and 'h2':secondLine
@@ -75,19 +76,22 @@ document.getElementById('body').appendChild(head_text);
 document.getElementById('body').appendChild(table);
 document.getElementById('body').appendChild(end_text);
 
-// An event listener that on 'mouse click' gives the
-// clicked cell the color 'red', clicking another cell
-// results with the previous returning to its' original color
-let colored_row = 0, colored_column = 0; // temporary index variables
-for (let i = 0; i<table.rows.length; i++) {
-    for(let j=0; j<table.rows[i].cells.length; j++) {
-        let temp_cell = table.rows[i].cells[j];
-        temp_cell.addEventListener('click', () => {
-            table.rows[colored_row].cells[colored_column].style.color = "black"; 
-            temp_cell.style.color = "red";
-            colored_row = i, colored_column = j; // colored cell index is now in variables
-        } );
+function clicker() {
+    // An event listener that on 'mouse click' gives the
+    // clicked cell the color 'red', clicking another cell
+    // results with the previous returning to its' original color
+    let colored_row = 0, colored_column = 0; // temporary index variables
+    for (let i = 0; i<table.rows.length; i++) {
+        for(let j=0; j<table.rows[i].cells.length; j++) {
+            let temp_cell = table.rows[i].cells[j];
+            temp_cell.addEventListener('click', () => {
+                table.rows[colored_row].cells[colored_column].style.color = "black"; 
+                temp_cell.style.color = "red";
+                colored_row = i, colored_column = j; // colored cell index is now in variables
+            } );
+        }
     }
 }
 
+clicker();
 
