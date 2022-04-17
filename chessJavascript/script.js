@@ -15,16 +15,42 @@ let table = document.createElement('table');
 
 // Using a 'for' loop to achieve 8 columns, 8 rows
 // with minimum code lines
-for(let j = 0; j<8; j++){
+for(let j = 1; j<9; j++){
     let temp_row = document.createElement('tr');
     table.appendChild(temp_row);
     for(let i = 1; i<9; i++){
         let temp_td = document.createElement('td');
         temp_td.innerHTML = "";
+        // the next if/if else statements will help us assign the Chessboard
+        // pieces, each piece to its' location, using Unicode
+        // first row:
+        if (j == 1 && i == 1) { temp_td.innerHTML = "&#9820";}
+        else if (j == 1 && i == 2) { temp_td.innerHTML = "&#9822";}
+        else if (j == 1 && i == 3) { temp_td.innerHTML = "&#9821";}
+        else if (j == 1 && i == 4) { temp_td.innerHTML = "&#9819";}
+        else if (j == 1 && i == 5) { temp_td.innerHTML = "&#9818";}
+        else if (j == 1 && i == 6) { temp_td.innerHTML = "&#9821";}
+        else if (j == 1 && i == 7) { temp_td.innerHTML = "&#9822";}
+        else if (j == 1 && i == 8) { temp_td.innerHTML = "&#9820";}
+        // second row:
+        else if (j == 2) { temp_td.innerHTML = "&#9823";}
+        // seventh row:
+        else if (j == 7) { temp_td.innerHTML = "&#9817";}
+        // eighth row:
+        else if (j == 8 && i == 1) { temp_td.innerHTML = "&#9814";}
+        else if (j == 8 && i == 2) { temp_td.innerHTML = "&#9816";}
+        else if (j == 8 && i == 3) { temp_td.innerHTML = "&#9815";}
+        else if (j == 8 && i == 4) { temp_td.innerHTML = "&#9813";}
+        else if (j == 8 && i == 5) { temp_td.innerHTML = "&#9812";}
+        else if (j == 8 && i == 6) { temp_td.innerHTML = "&#9815";}
+        else if (j == 8 && i == 7) { temp_td.innerHTML = "&#9816";}
+        else if (j == 8 && i == 8) { temp_td.innerHTML = "&#9814";}
         temp_row.appendChild(temp_td);
         }
 }
-
+// Creating a text 'outro', a 'div' element: end_text
+// the 'div' is a parent element of 'h1':end_text_1
+// and 'h2':end_text_2, 'h2':end_text_3
 let end_text = document.createElement('div');
 let end_text_1 = document.createElement('h1');
 end_text_1.innerHTML = "Let's play a game...";

@@ -1,3 +1,6 @@
+body {
+    background-color:#ffffff;
+}
 table {
     border-collapse: collapse;
     margin: auto;
@@ -21,12 +24,10 @@ td {
 
 tr:nth-of-type(even) td:nth-of-type(odd),
 tr:nth-of-type(odd) td:nth-of-type(even) {
-    color: white;
-    background-color: white;
+    background-color: #D6D5D7;
 }
 
 tr:nth-of-type(even) td:nth-of-type(even),
 tr:nth-of-type(odd) td:nth-of-type(odd) {
-    color: black;
-    background-color: black;
+    background-color: white;
 }
