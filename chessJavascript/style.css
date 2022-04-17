@@ -25,9 +25,15 @@ td {
 tr:nth-of-type(even) td:nth-of-type(odd),
 tr:nth-of-type(odd) td:nth-of-type(even) {
     background-color: #D6D5D7;
+    /* color: black; */
 }
 
 tr:nth-of-type(even) td:nth-of-type(even),
 tr:nth-of-type(odd) td:nth-of-type(odd) {
     background-color: white;
+    /* color: black; */
+}
+
+.red_cell {
+    color: red;
 }
