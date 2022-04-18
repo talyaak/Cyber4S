@@ -1,0 +1,23 @@
+table {
+  border-collapse: collapse;
+  margin: 20px;
+}
+
+.light-cell {
+  background: #cfdbeb;
+  width: 70px;
+  height: 70px;
+}
+
+.dark-cell {
+  background: #8ba2c0;
+  width: 70px;
+  height: 70px;
+}
+
+.selected {
+  background-color: #414040;
+}
+.selected-path {
+  background-color: #95ea3a;
+}
