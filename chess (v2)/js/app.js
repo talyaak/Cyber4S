@@ -69,37 +69,35 @@ function onCellClick(event) {
   }
   selectedCell = event.currentTarget;
   selectedCell.classList.add('selected');
-  cellPathColor(selectedCell);
+  possibleMoves(selectedCell);
 }
 
-function cleanCells() {
-  console.log("cleanCells activated");
-  for (let i = 0; i < table1.rows.length; i++) {
-    for (let j = 0; j < table1.rows[i].length; j++) {
-      let tempCells = table1.rows[i].cells
-      tempCells[j].classList.remove('selected-path');
-    }
-  }
-}
+// function cleanCells() {
+//   console.log("cleanCells activated");
+//   for (let piece in pieces) {
+//     let list = table1.rows[piece.row].cells[piece.col].classList; 
+//     if (list.includes('piece-path')) {
+//       list.remove('piece-path');
+//     }
+//   }
+// }
 
 
-function cellPathColor(tempCell) {
-  cleanCells();
+function possibleMoves(tempCell) {
+  // cleanCells();
   let tempRow = parseInt(tempCell.id[5]);
   let tempCol = parseInt(tempCell.id[7]);
   if (tempRow == 1) { // white pawn check
     console.log("stage 1");
-    table1.rows[tempRow + 1].cells[tempCol - 1].classList.add('selected-path');
-    table1.rows[tempRow + 1].cells[tempCol + 1].classList.add('selected-path');
+    table1.rows[tempRow + 1].cells[tempCol].classList.add('piece-path');
   } else if (tempRow == 6) { // black pawn check
     console.log("stage 2");
-    table1.rows[tempRow - 1].cells[tempCol + 1].classList.add('selected-path');
-    table1.rows[tempRow - 1].cells[tempCol - 1].classList.add('selected-path');
+    table1.rows[tempRow - 1].cells[tempCol].classList.add('piece-path');
   } else if (tempRow == 0 && tempCol == 0) {
       console.log("stage 3");
       for (let i = 1; i<8; i++){
-        table1.rows[i].cells[0].classList.add('selected-path');
-        table1.rows[0].cells[i].classList.add('selected-path');
+        table1.rows[i].cells[0].classList.add('piece-path');
+        table1.rows[0].cells[i].classList.add('piece-path');
       }
   }
 }
@@ -118,7 +116,7 @@ function createChessBoard() {
       } else {
         cell.className = 'dark-cell';
       }
-      cell.addEventListener('click', onCellClick);
+      cell.addEventListener('mouseover', onCellClick);
     }
   }
   pieces = getInitialBoard();
