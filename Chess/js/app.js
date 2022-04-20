@@ -180,17 +180,6 @@ function onCellClick(event, row, col) {
       cell.classList.add('possible-move');
     }
   }
-  // // Show possible moves
-  // for (let piece of pieces) {
-  //   if (piece.row === row && piece.col === col) {
-  //     // console.log(piece);
-  //     let possibleMoves = piece.getPossibleMoves();
-  //     for (let possibleMove of possibleMoves) {
-  //       const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
-  //       cell.classList.add('possible-move');
-  //     }
-  //   }
-  // }
   
   // Clear previously selected cell
   if (selectedCell !== undefined) {
@@ -221,7 +210,6 @@ function createChessBoard() {
 
   // Create list of pieces (32 total)
   boardData = new BoardData(getInitialPieces());
-  // pieces = getInitialPieces();
 
   // Add pieces images to board
   for (let piece of boardData.pieces) {
