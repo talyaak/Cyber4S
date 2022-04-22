@@ -1,7 +1,7 @@
+// Global variables - constants
 const BOARD_SIZE = 8;
 const WHITE_PLAYER = 'white';
 const BLACK_PLAYER = 'black';
-
 const PAWN = 'pawn';
 const ROOK = 'rook';
 const KNIGHT = 'knight';
@@ -9,11 +9,14 @@ const BISHOP = 'bishop';
 const KING = 'king';
 const QUEEN = 'queen';
 
+//Global variables - non-constants
 let selectedCell;
 let pieces = [];
 let table;
 let boardData;
 
+/* 'Piece' is an object that stores information about
+every chess piece*/ 
 class Piece {
   constructor(row, col, type, player) {
     this.row = row;
@@ -22,6 +25,8 @@ class Piece {
     this.player = player;
   }
 
+  /* Returns an array of possible moves of the piece
+  given the limitations of the piece's location*/ 
   getPossibleMoves() {
     // Get relative moves
     let relativeMoves;
@@ -65,7 +70,6 @@ class Piece {
   }
 
   getPawnRelativeMoves() {
-    // TODO: Give different answer to black player
     if (this.player === WHITE_PLAYER){
       return [[1, 0]];
     } else if (this.player === BLACK_PLAYER) {
@@ -115,11 +119,10 @@ class Piece {
   }
 }
 
+/* BoardData is an object that stores information
+regarding the chess pieces and the board itself
+It will help us access data without using DOM */
 class BoardData {
-  // The constructor receives the board pieces
-  // Now, we can use board data to access the pieces
-  // Ideally - we will use it so that we'll make changes
-  // in future project updates/upgrades
   constructor(pieces) {
     this.pieces = pieces;
   }
@@ -134,6 +137,8 @@ class BoardData {
   }
 }
 
+/* Returns an array of pieces, this array will later
+be used by BoardData*/
 function getInitialPieces() {
   let result = [];
   addFirstRowPieces(result, 0, WHITE_PLAYER);
@@ -144,42 +149,34 @@ function getInitialPieces() {
     result.push(new Piece(6, i, PAWN, BLACK_PLAYER));
   }
   return result;
+
+  function addFirstRowPieces(result, row, player) {
+    result.push(new Piece(row, 0, ROOK, player));
+    result.push(new Piece(row, 1, KNIGHT, player));
+    result.push(new Piece(row, 2, BISHOP, player));
+    result.push(new Piece(row, 3, KING, player));
+    result.push(new Piece(row, 4, QUEEN, player));
+    result.push(new Piece(row, 5, BISHOP, player));
+    result.push(new Piece(row, 6, KNIGHT, player));
+    result.push(new Piece(row, 7, ROOK, player));
+  }
 }
 
-function addFirstRowPieces(result, row, player) {
-  result.push(new Piece(row, 0, ROOK, player));
-  result.push(new Piece(row, 1, KNIGHT, player));
-  result.push(new Piece(row, 2, BISHOP, player));
-  result.push(new Piece(row, 3, KING, player));
-  result.push(new Piece(row, 4, QUEEN, player));
-  result.push(new Piece(row, 5, BISHOP, player));
-  result.push(new Piece(row, 6, KNIGHT, player));
-  result.push(new Piece(row, 7, ROOK, player));
-}
 
+/* Creates an img element according to the parameters
+it received, appends it to the cell */
 function addImage(cell, player, name) {
   const image = document.createElement('img');
   image.src = 'images/' + player + '/' + name + '.png';
   cell.appendChild(image);
 }
 
+/* Clicking on any cell/piece will result in calling this function
+The cell wil be 'selected' with a unique color. Also: cells that
+the Chess piece can move towards - will be given another color*/
 function onCellClick(event, row, col) {
-  console.log('row', row);
-  console.log('col', col);
-  // Clear all previous possible moves
-  for (let i = 0; i < BOARD_SIZE; i++) {
-    for (let j = 0; j < BOARD_SIZE; j++) {
-      table.rows[i].cells[j].classList.remove('possible-move');
-    }
-  }
-  const piece = boardData.getPiece(row, col);
-  if (piece !== undefined) {
-    let possibleMoves = piece.getPossibleMoves();
-    for (let possibleMove of possibleMoves) {
-      const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
-      cell.classList.add('possible-move');
-    }
-  }
+  console.log('row', row); // for testing, will be deleted
+  console.log('col', col);  // for testing, will be deleted
   
   // Clear previously selected cell
   if (selectedCell !== undefined) {
@@ -189,8 +186,28 @@ function onCellClick(event, row, col) {
   // Show selected cell
   selectedCell = event.currentTarget;
   selectedCell.classList.add('selected');
+  
+  // Clear all previous possible moves
+  for (let i = 0; i < BOARD_SIZE; i++) {
+    for (let j = 0; j < BOARD_SIZE; j++) {
+      table.rows[i].cells[j].classList.remove('possible-move');
+    }
+  }
+  
+  // Using boardData to gain information
+  const piece = boardData.getPiece(row, col); 
+  if (piece !== undefined) {
+    let possibleMoves = piece.getPossibleMoves();
+    for (let possibleMove of possibleMoves) {
+      const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
+      cell.classList.add('possible-move');
+    }
+  }
+  
 }
 
+/* Called upon after the HTML 'load' event
+Kickstarts creation of the Chess board*/
 function createChessBoard() {
   // Create empty chess board HTML:
   table = document.createElement('table');
@@ -199,16 +216,18 @@ function createChessBoard() {
     const rowElement = table.insertRow();
     for (let col = 0; col < BOARD_SIZE; col++) {
       const cell = rowElement.insertCell();
-      if ((row + col) % 2 === 0) {
-        cell.className = 'light-cell';
-      } else {
-        cell.className = 'dark-cell';
-      }
+      // 'if' statements to appoint cell color
+      if (row % 2 == 0 && col % 2 == 0) { cell.className = 'light-cell';} 
+      else if (row%2 != 0 && col%2 == 0) { cell.className = 'dark-cell';}
+      else if (row%2 == 0 && col%2 != 0) { cell.className = 'dark-cell';}
+      else {cell.className = 'light-cell'};
+      // eventListener that calls onCellClick() after clicking on each cell
       cell.addEventListener('click', (event) => onCellClick(event, row, col));
     }
   }
 
-  // Create list of pieces (32 total)
+  /* boardData is a data storing object, BoardData() will
+   receive the initial chess pieces as an array */
   boardData = new BoardData(getInitialPieces());
 
   // Add pieces images to board
@@ -218,4 +237,5 @@ function createChessBoard() {
   }
 }
 
+// After the HTML is loaded, createChessBoard() is called
 window.addEventListener('load', createChessBoard);
