@@ -15,13 +15,8 @@ let pieces = [];
 let table;
 let boardData;
 
-<<<<<<< HEAD
 /* 'Piece' - stores information about
 every chess piece*/
-=======
-/* 'Piece' is an object that stores information about
-every chess piece*/ 
->>>>>>> 276c67af36d83aca28d9d2676ec7785576b28f27
 class Piece {
   constructor(row, col, type, player) {
     this.row = row;
@@ -31,7 +26,6 @@ class Piece {
     this.opponent = this.getOpponent();
   }
 
-<<<<<<< HEAD
   // Get the opponent's player type
   getOpponent() {
     if (this.player === WHITE_PLAYER) {
@@ -41,10 +35,6 @@ class Piece {
   }
   /* Get an array of possible moves of the piece
   given the limitations of the piece's location */ 
-=======
-  /* Returns an array of possible moves of the piece
-  given the limitations of the piece's location*/ 
->>>>>>> 276c67af36d83aca28d9d2676ec7785576b28f27
   getPossibleMoves() {
     // Get relative moves
     let moves;
@@ -77,7 +67,6 @@ class Piece {
     return filteredMoves;
   }
 
-<<<<<<< HEAD
   /* This function will return the available cells to move
   to - in the given direction parameters (x,x) */ 
   getMovesInDirection(rowDir, colDir, boardData) {
@@ -96,13 +85,6 @@ class Piece {
         // console.log("met player");
         return result;
       }
-=======
-  getPawnRelativeMoves() {
-    if (this.player === WHITE_PLAYER){
-      return [[1, 0]];
-    } else if (this.player === BLACK_PLAYER) {
-      return [[-1, 0]];
->>>>>>> 276c67af36d83aca28d9d2676ec7785576b28f27
     }
     // console.log("all empty cells");
     return result;
@@ -192,19 +174,12 @@ class Piece {
   }
 }
 
-<<<<<<< HEAD
 // BoardData - our local JS database
 class BoardData {
   /* The constructor receives the board pieces
   We can use board data to access the pieces, and
   info regarding them */
 
-=======
-/* BoardData is an object that stores information
-regarding the chess pieces and the board itself
-It will help us access data without using DOM */
-class BoardData {
->>>>>>> 276c67af36d83aca28d9d2676ec7785576b28f27
   constructor(pieces) {
     this.pieces = pieces;
   }
@@ -231,12 +206,7 @@ class BoardData {
   }
 }
 
-<<<<<<< HEAD
 // Returns an array of pieces, this function is used by BoardData
-=======
-/* Returns an array of pieces, this array will later
-be used by BoardData*/
->>>>>>> 276c67af36d83aca28d9d2676ec7785576b28f27
 function getInitialPieces() {
   let result = [];
   addFirstRowPieces(result, 0, WHITE_PLAYER);
@@ -247,23 +217,19 @@ function getInitialPieces() {
     result.push(new Piece(6, i, PAWN, BLACK_PLAYER));
   }
   return result;
-
-  function addFirstRowPieces(result, row, player) {
-    result.push(new Piece(row, 0, ROOK, player));
-    result.push(new Piece(row, 1, KNIGHT, player));
-    result.push(new Piece(row, 2, BISHOP, player));
-    result.push(new Piece(row, 3, KING, player));
-    result.push(new Piece(row, 4, QUEEN, player));
-    result.push(new Piece(row, 5, BISHOP, player));
-    result.push(new Piece(row, 6, KNIGHT, player));
-    result.push(new Piece(row, 7, ROOK, player));
-  }
 }
 
-<<<<<<< HEAD
-=======
+function addFirstRowPieces(result, row, player) {
+  result.push(new Piece(row, 0, ROOK, player));
+  result.push(new Piece(row, 1, KNIGHT, player));
+  result.push(new Piece(row, 2, BISHOP, player));
+  result.push(new Piece(row, 3, KING, player));
+  result.push(new Piece(row, 4, QUEEN, player));
+  result.push(new Piece(row, 5, BISHOP, player));
+  result.push(new Piece(row, 6, KNIGHT, player));
+  result.push(new Piece(row, 7, ROOK, player));
+}
 
->>>>>>> 276c67af36d83aca28d9d2676ec7785576b28f27
 /* Creates an img element according to the parameters
 it received, appends it to the cell */
 function addImage(cell, player, name) {
@@ -277,11 +243,25 @@ The cell wil be 'selected' with a unique color. Also: cells that
 the Chess piece can move towards - will be given another color*/
 function onCellClick(event, row, col) {
   console.log('row', row); // for testing, will be deleted
-<<<<<<< HEAD
   console.log('col', col); // for testing, will be deleted
 
-=======
-  console.log('col', col);  // for testing, will be deleted
+  // Clear all previous possible moves
+  for (let i = 0; i < BOARD_SIZE; i++) {
+    for (let j = 0; j < BOARD_SIZE; j++) {
+      table.rows[i].cells[j].classList.remove('possible-move');
+    }
+  }
+  
+  // Using boardData to gain information
+  const piece = boardData.getPiece(row, col);
+  // Acquiring possible moves and giving them a color
+  if (piece !== undefined) {
+    let possibleMoves = piece.getPossibleMoves();
+    for (let possibleMove of possibleMoves) {
+      const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
+      cell.classList.add('possible-move');
+    }
+  }
   
   // Clear previously selected cell
   if (selectedCell !== undefined) {
@@ -291,30 +271,6 @@ function onCellClick(event, row, col) {
   // Show selected cell
   selectedCell = event.currentTarget;
   selectedCell.classList.add('selected');
-  
->>>>>>> 276c67af36d83aca28d9d2676ec7785576b28f27
-  // Clear all previous possible moves
-  for (let i = 0; i < BOARD_SIZE; i++) {
-    for (let j = 0; j < BOARD_SIZE; j++) {
-      table.rows[i].cells[j].classList.remove('possible-move');
-    }
-  }
-  
-  // Using boardData to gain information
-<<<<<<< HEAD
-  const piece = boardData.getPiece(row, col);
-  // Acquiring possible moves and giving them a color
-=======
-  const piece = boardData.getPiece(row, col); 
->>>>>>> 276c67af36d83aca28d9d2676ec7785576b28f27
-  if (piece !== undefined) {
-    let possibleMoves = piece.getPossibleMoves();
-    for (let possibleMove of possibleMoves) {
-      const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
-      cell.classList.add('possible-move');
-    }
-  }
-  
 }
 
 /* Called upon after the HTML 'load' event
@@ -327,19 +283,11 @@ function createChessBoard() {
     const rowElement = table.insertRow();
     for (let col = 0; col < BOARD_SIZE; col++) {
       const cell = rowElement.insertCell();
-<<<<<<< HEAD
       if ((row + col) % 2 === 0) {
         cell.className = 'light-cell';
       } else {
         cell.className = 'dark-cell';
       }
-=======
-      // 'if' statements to appoint cell color
-      if (row % 2 == 0 && col % 2 == 0) { cell.className = 'light-cell';} 
-      else if (row%2 != 0 && col%2 == 0) { cell.className = 'dark-cell';}
-      else if (row%2 == 0 && col%2 != 0) { cell.className = 'dark-cell';}
-      else {cell.className = 'light-cell'};
->>>>>>> 276c67af36d83aca28d9d2676ec7785576b28f27
       // eventListener that calls onCellClick() after clicking on each cell
       cell.addEventListener('click', (event) => onCellClick(event, row, col));
     }
