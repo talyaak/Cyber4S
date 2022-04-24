@@ -1,7 +1,7 @@
+// Global variables - constants
 const BOARD_SIZE = 8;
 const WHITE_PLAYER = 'white';
 const BLACK_PLAYER = 'black';
-
 const PAWN = 'pawn';
 const ROOK = 'rook';
 const KNIGHT = 'knight';
@@ -9,51 +9,54 @@ const BISHOP = 'bishop';
 const KING = 'king';
 const QUEEN = 'queen';
 
+//Global variables - non-constants
 let selectedCell;
 let pieces = [];
 let table;
 let boardData;
 
+/* 'Piece' - stores information about
+every chess piece*/
 class Piece {
   constructor(row, col, type, player) {
     this.row = row;
     this.col = col;
     this.type = type;
     this.player = player;
+    this.opponent = this.getOpponent();
   }
 
+  // Get the opponent's player type
+  getOpponent() {
+    if (this.player === WHITE_PLAYER) {
+      return BLACK_PLAYER;
+    }
+    else { return WHITE_PLAYER; }
+  }
+  /* Get an array of possible moves of the piece
+  given the limitations of the piece's location */ 
   getPossibleMoves() {
     // Get relative moves
-    let relativeMoves;
+    let moves;
     if (this.type === PAWN) {
-      relativeMoves = this.getPawnRelativeMoves();
+      moves = this.getPawnMoves(boardData);
     } else if (this.type === ROOK) {
-      relativeMoves = this.getRookRelativeMoves();
+      moves = this.getRookMoves(boardData);
     } else if (this.type === KNIGHT) {
-      relativeMoves = this.getKnightRelativeMoves();
+      moves = this.getKnightMoves(boardData);
     } else if (this.type === BISHOP) {
-      relativeMoves = this.getBishopRelativeMoves();
+      moves = this.getBishopMoves(boardData);
     } else if (this.type === KING) {
-      relativeMoves = this.getKingRelativeMoves();
+      moves = this.getKingMoves(boardData);
     } else if (this.type === QUEEN) {
-      relativeMoves = this.getQueenRelativeMoves();
+      moves = this.getQueenMoves(boardData);
     } else {
       console.log("Unknown type", type)
     }
-    console.log('relativeMoves', relativeMoves);
-
-    // Get absolute moves
-    let absoluteMoves = [];
-    for (let relativeMove of relativeMoves) {
-      const absoluteRow = this.row + relativeMove[0];
-      const absoluteCol = this.col + relativeMove[1];
-      absoluteMoves.push([absoluteRow, absoluteCol]);
-    }
-    console.log('absoluteMoves', absoluteMoves);
 
     // Get filtered absolute moves
     let filteredMoves = [];
-    for (let absoluteMove of absoluteMoves) {
+    for (let absoluteMove of moves) {
       const absoluteRow = absoluteMove[0];
       const absoluteCol = absoluteMove[1];
       if (absoluteRow >= 0 && absoluteRow <= 7 && absoluteCol >= 0 && absoluteCol <= 7) {
@@ -64,62 +67,119 @@ class Piece {
     return filteredMoves;
   }
 
-  getPawnRelativeMoves() {
-    // TODO: Give different answer to black player
-    if (this.player === WHITE_PLAYER){
-      return [[1, 0]];
-    } else if (this.player === BLACK_PLAYER) {
-      return [[-1, 0]];
-    }
-  }
+  /* This function will return the available cells to move
+  to - in the given direction parameters (x,x) */ 
+  getMovesInDirection(rowDir, colDir, boardData) {
+    let result = [], opponent = this.getOpponent, player = this.player;
 
-  getRookRelativeMoves() {
-    let result = [];
     for (let i = 1; i < BOARD_SIZE; i++) {
-      result.push([i, 0]);
-      result.push([-i, 0]);
-      result.push([0, i]);
-      result.push([0, -i]);
+      let row = this.row + rowDir * i;
+      let col = this.col + colDir * i;
+      if (boardData.isEmpty(row, col)) {
+        result.push([row, col]);
+      } else if (boardData.isPlayer(row, col, opponent)) {
+        result.push([row, col]);
+        // console.log("met opponent");
+        return result;
+      } else if (boardData.isPlayer(row, col, player)) {
+        // console.log("met player");
+        return result;
+      }
     }
+    // console.log("all empty cells");
     return result;
   }
 
-  getKnightRelativeMoves() {
+  // Get moves of piece (type = "PAWN")
+  getPawnMoves(boardData) {
     let result = [];
-    result.push([-2,1],[-1,2],[1,2],[-1,-2],[2,1],[2,-1],[1,-2],[-1,2],[-2,-1]);
-    return result;
-  }
+    let direction = 1;
+    if (this.player === BLACK_PLAYER) {direction = -1 }
+    
+    // Checks if cell "in front" of pawn is available
+    let position = [this.row + direction, this.col];
+    if (boardData.isEmpty(position[0], position[1])) {
+      result.push(position);
+    }  
 
-  getBishopRelativeMoves() {
-    let result = [];
-    for (let i = 1; i<BOARD_SIZE; i++) {
-      result.push([i,i],[i,-i],[-i,i],[-i,-i]);
+    // Checks if there is an opponent in front of pawn, side 1
+    position = [this.row + direction, this.col + direction];
+    if(boardData.isPlayer(position[0], position[1], this.opponent)) {
+      result.push(position);
     }
+
+    // Checks if there is an opponent in front of pawn, side 2
+    position = [this.row + direction, this.col - direction];
+    if (boardData.isPlayer(position[0], position[1], this.opponent)) {
+      result.push(position);
+    }
+
+    // result = every cell that player can move to
     return result;
   }
 
-  getKingRelativeMoves() {
-    return [[0,1],[1,1],[1,0],[1,-1],[0,-1],[-1,-1],[-1,0],[-1,1]];
+  // Get moves of piece (type = "ROOK")
+  getRookMoves(boardData) {
+    let result = [];
+    result = result.concat(this.getMovesInDirection(-1, 0, boardData));
+    result = result.concat(this.getMovesInDirection(1, 0, boardData));
+    result = result.concat(this.getMovesInDirection(0, -1, boardData));
+    result = result.concat(this.getMovesInDirection(0, 1, boardData));
+    return result;
   }
 
-  getQueenRelativeMoves() {
-    let result = [];
-    for(let i = 1; i<BOARD_SIZE; i++){
-      result.push([i,0]);
-      result.push([-i,0]);
-      for (let j =1; j<BOARD_SIZE; j++){
-        result.push([0,j],[0,-j],[i,j],[-i,j],[i,-j],[-i,-j]);
+  // Get moves of piece (type = "KNIGHT")
+  getKnightMoves(boardData) {
+    let result = [], player = this.player;
+    const relativeMoves = [[2, 1], [2, -1], [-2, 1], [-2, -1], [-1, 2], [1, 2], [-1, -2], [1, -2]];
+    for (let relativeMove of relativeMoves) {
+      let row = this.row + relativeMove[0];
+      let col = this.col + relativeMove[1];
+      if (boardData.isPlayer(row, col, player) === false) {
+        result.push([row, col]);
       }
     }
     return result;
   }
+
+  // Get moves of piece (type = "BISHOP")
+  getBishopMoves(boardData) {
+    let result = [];
+    result = result.concat(this.getMovesInDirection(-1, -1, boardData));
+    result = result.concat(this.getMovesInDirection(-1, 1, boardData));
+    result = result.concat(this.getMovesInDirection(1, -1, boardData));
+    result = result.concat(this.getMovesInDirection(1, 1, boardData));
+    return result;
+  }
+
+  // Get moves of piece (type = "KING")
+  getKingMoves(boardData) {
+    let result = [];
+    const relativeMoves = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+    for (let relativeMove of relativeMoves) {
+      let row = this.row + relativeMove[0];
+      let col = this.col + relativeMove[1];
+      if (!boardData.isPlayer(row, col, this.player)) {
+        result.push([row, col]);
+      }
+    }
+    return result;
+  }
+
+  /* Get moves of piece (type == "PAWN")
+  Uses Rook and Bishop methods to acquire Queen moves */
+  getQueenMoves(boardData) {
+    let result = this.getBishopMoves(boardData);
+    return result.concat(this.getRookMoves(boardData));;
+  }
 }
 
+// BoardData - our local JS database
 class BoardData {
-  // The constructor receives the board pieces
-  // Now, we can use board data to access the pieces
-  // Ideally - we will use it so that we'll make changes
-  // in future project updates/upgrades
+  /* The constructor receives the board pieces
+  We can use board data to access the pieces, and
+  info regarding them */
+
   constructor(pieces) {
     this.pieces = pieces;
   }
@@ -132,8 +192,21 @@ class BoardData {
         }
       }
   }
+
+  /* Checks if given parameters appoint to undefined
+  cell (no piece in cell) */
+  isEmpty(row, col) {
+    return this.getPiece(row,col) === undefined;
+  }
+
+  // Checks if given parameters appoint to a 
+  // piece which is of type 'player'
+  isPlayer(row, col, player) {
+    return !this.isEmpty(row, col) && this.getPiece(row, col).player === player;
+  }
 }
 
+// Returns an array of pieces, this function is used by BoardData
 function getInitialPieces() {
   let result = [];
   addFirstRowPieces(result, 0, WHITE_PLAYER);
@@ -157,22 +230,31 @@ function addFirstRowPieces(result, row, player) {
   result.push(new Piece(row, 7, ROOK, player));
 }
 
+/* Creates an img element according to the parameters
+it received, appends it to the cell */
 function addImage(cell, player, name) {
   const image = document.createElement('img');
   image.src = 'images/' + player + '/' + name + '.png';
   cell.appendChild(image);
 }
 
+/* Clicking on any cell/piece will result in calling this function
+The cell wil be 'selected' with a unique color. Also: cells that
+the Chess piece can move towards - will be given another color*/
 function onCellClick(event, row, col) {
-  console.log('row', row);
-  console.log('col', col);
+  console.log('row', row); // for testing, will be deleted
+  console.log('col', col); // for testing, will be deleted
+
   // Clear all previous possible moves
   for (let i = 0; i < BOARD_SIZE; i++) {
     for (let j = 0; j < BOARD_SIZE; j++) {
       table.rows[i].cells[j].classList.remove('possible-move');
     }
   }
+  
+  // Using boardData to gain information
   const piece = boardData.getPiece(row, col);
+  // Acquiring possible moves and giving them a color
   if (piece !== undefined) {
     let possibleMoves = piece.getPossibleMoves();
     for (let possibleMove of possibleMoves) {
@@ -191,8 +273,10 @@ function onCellClick(event, row, col) {
   selectedCell.classList.add('selected');
 }
 
+/* Called upon after the HTML 'load' event
+Kickstarts creation of the Chess board*/
 function createChessBoard() {
-  // Create empty chess board HTML:
+  // Create empty chess board inside the HTML file:
   table = document.createElement('table');
   document.body.appendChild(table);
   for (let row = 0; row < BOARD_SIZE; row++) {
@@ -204,11 +288,13 @@ function createChessBoard() {
       } else {
         cell.className = 'dark-cell';
       }
+      // eventListener that calls onCellClick() after clicking on each cell
       cell.addEventListener('click', (event) => onCellClick(event, row, col));
     }
   }
 
-  // Create list of pieces (32 total)
+  /* boardData is a data storing object, BoardData() will
+   receive the initial chess pieces as an array */
   boardData = new BoardData(getInitialPieces());
 
   // Add pieces images to board
@@ -218,4 +304,5 @@ function createChessBoard() {
   }
 }
 
+// After the HTML is loaded, createChessBoard() is called
 window.addEventListener('load', createChessBoard);
