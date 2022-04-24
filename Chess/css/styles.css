@@ -1,7 +1,17 @@
-table {
-  margin: 20px;
+body {
+  background-color:#ffffff;
 }
 
+table {
+  margin: auto;
+  border-collapse: collapse;
+}
+table,
+th,
+td {
+    border: 1px solid black;
+    text-align: center;
+}
 .light-cell {
   background: #cfdbeb;
   width: 70px;
