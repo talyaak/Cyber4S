@@ -320,7 +320,10 @@ function tryMove(piece, row, col) {
       const removedPiece = boardData.getPiece(row, col);
       boardData.removePiece(row, col);
       if (removedPiece !== undefined && removedPiece.type === KING){
-        alert(removedPiece.getOpponent().toUpperCase() + " Team won!");
+        let opponentStr = removedPiece.getOpponent();
+        opponentStr = opponentStr.charAt(0).toUpperCase() + opponentStr.slice(1);
+        alert( "Checkmate.\n" + 
+          opponentStr + " team won!");
       } 
       console.log(boardData.pieces.length);
       piece.row = row;
