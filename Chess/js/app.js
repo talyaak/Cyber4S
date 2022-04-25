@@ -9,11 +9,13 @@ const BISHOP = 'bishop';
 const KING = 'king';
 const QUEEN = 'queen';
 
+const CHESS_BOARD_ID = 'chess-board';
+
 //Global variables - non-constants
-let selectedCell;
-let pieces = [];
 let table;
 let boardData;
+let selectedPiece;
+let playerTurn = WHITE_PLAYER;
 
 /* 'Piece' - stores information about
 every chess piece*/
@@ -35,7 +37,7 @@ class Piece {
   }
   /* Get an array of possible moves of the piece
   given the limitations of the piece's location */ 
-  getPossibleMoves() {
+  getPossibleMoves(boardData) {
     // Get relative moves
     let moves;
     if (this.type === PAWN) {
@@ -70,7 +72,7 @@ class Piece {
   /* This function will return the available cells to move
   to - in the given direction parameters (x,x) */ 
   getMovesInDirection(rowDir, colDir, boardData) {
-    let result = [], opponent = this.getOpponent, player = this.player;
+    let result = [], opponent = this.opponent, player = this.player;
 
     for (let i = 1; i < BOARD_SIZE; i++) {
       let row = this.row + rowDir * i;
@@ -204,6 +206,16 @@ class BoardData {
   isPlayer(row, col, player) {
     return !this.isEmpty(row, col) && this.getPiece(row, col).player === player;
   }
+
+  removePiece(row, col) {
+    for (let i = 0; i < this.pieces.length; i++) {
+      const piece = this.pieces[i];
+      if (piece.row === row && piece.col === col) {
+        // Remove piece at index i
+        this.pieces.splice(i, 1);
+      }
+    }
+  }
 }
 
 // Returns an array of pieces, this function is used by BoardData
@@ -240,15 +252,15 @@ function addImage(cell, player, name) {
 
 /* Clicking on any cell/piece will result in calling this function
 The cell wil be 'selected' with a unique color. Also: cells that
-the Chess piece can move towards - will be given another color*/
-function onCellClick(event, row, col) {
-  console.log('row', row); // for testing, will be deleted
-  console.log('col', col); // for testing, will be deleted
-
-  // Clear all previous possible moves
+the Chess piece can move towards/are enemies - will be given another color*/
+function showMovesForPiece(row, col) {
+   console.log('showMovesForPiece'); // for testing, will be deleted
+  // Clear all previous possible moves and selected
   for (let i = 0; i < BOARD_SIZE; i++) {
     for (let j = 0; j < BOARD_SIZE; j++) {
       table.rows[i].cells[j].classList.remove('possible-move');
+      table.rows[i].cells[j].classList.remove('selected');
+      table.rows[i].cells[j].classList.remove('enemy');
     }
   }
   
@@ -256,28 +268,88 @@ function onCellClick(event, row, col) {
   const piece = boardData.getPiece(row, col);
   // Acquiring possible moves and giving them a color
   if (piece !== undefined) {
-    let possibleMoves = piece.getPossibleMoves();
+    let possibleMoves = piece.getPossibleMoves(boardData);
     for (let possibleMove of possibleMoves) {
+      console.log(possibleMove);  
       const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
+      // Giving a 'eatable' enemy a color
+      if (boardData.isPlayer(possibleMove[0], possibleMove[1], piece.getOpponent())) {
+        cell.classList.add('enemy');
+      }
+      // Giving cells in our path a color
       cell.classList.add('possible-move');
     }
   }
   
-  // Clear previously selected cell
-  if (selectedCell !== undefined) {
-    selectedCell.classList.remove('selected');
-  }
+  // Giving the selected piece's cell a color
+  table.rows[row].cells[col].classList.add('selected');
+  selectedPiece = piece;
+}
 
-  // Show selected cell
-  selectedCell = event.currentTarget;
-  selectedCell.classList.add('selected');
+// When cells are clicked - this function starts
+function onCellClick(event, row, col) {
+    // first case click scenario (for first move)
+    if (selectedPiece === undefined) {
+      showMovesForPiece(row, col);
+      // console.log("case 1"); test
+    } else {
+      if (tryMove(selectedPiece, row, col)) { // this represents MOVEMENT of piece
+        selectedPiece = undefined; // going back to first case scenario
+
+        // Recreate whole board - doesn't affect user experience
+        createChessBoard(boardData);
+        // console.log("case 2"); test
+      } else { // this represents clicking on non-'possible-move' cell
+        showMovesForPiece(row, col);
+        // console.log("case 3"); test
+      }
+    }
+
+}
+
+// Tries to actually make a move, returns true if successful.
+function tryMove(piece, row, col) {
+  const possibleMoves = piece.getPossibleMoves(boardData);
+  // possibleMoves looks like this: [[1,2], [3,2]]
+  for (const possibleMove of possibleMoves) {
+    // possibleMove looks like this: [1,2]
+    if (possibleMove[0] === row && possibleMove[1] === col) {
+      // There is a legal move
+      console.log(boardData.pieces.length);
+      // If new (row,col) cell had enemy, enemy piece is removed 
+      const removedPiece = boardData.getPiece(row, col);
+      boardData.removePiece(row, col);
+      if (removedPiece !== undefined && removedPiece.type === KING){
+        alert(removedPiece.getOpponent().toUpperCase() + " Team won!");
+      } 
+      console.log(boardData.pieces.length);
+      piece.row = row;
+      piece.col = col;
+      return true;
+    }
+  }
+  return false;
 }
 
 /* Called upon after the HTML 'load' event
 Kickstarts creation of the Chess board*/
-function createChessBoard() {
+function _init() {
+  /* boardData is a data storing object, BoardData() will
+   receive the initial chess pieces as an array */
+  boardData = new BoardData(getInitialPieces());
+  createChessBoard(boardData);
+}
+
+// Creates table, configures it as Chess board
+function createChessBoard(boardData) {
+  table = document.getElementById(CHESS_BOARD_ID);
+  if (table !== null) {
+    table.remove();
+  }
+
   // Create empty chess board inside the HTML file:
   table = document.createElement('table');
+  table.id = CHESS_BOARD_ID;
   document.body.appendChild(table);
   for (let row = 0; row < BOARD_SIZE; row++) {
     const rowElement = table.insertRow();
@@ -293,10 +365,7 @@ function createChessBoard() {
     }
   }
 
-  /* boardData is a data storing object, BoardData() will
-   receive the initial chess pieces as an array */
-  boardData = new BoardData(getInitialPieces());
-
+  
   // Add pieces images to board
   for (let piece of boardData.pieces) {
     const cell = table.rows[piece.row].cells[piece.col];
@@ -305,4 +374,4 @@ function createChessBoard() {
 }
 
 // After the HTML is loaded, createChessBoard() is called
-window.addEventListener('load', createChessBoard);
+window.addEventListener('load', _init);
