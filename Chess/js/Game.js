@@ -23,7 +23,6 @@ class Game {
         if (piece !== undefined) {
             let possibleMoves = piece.getPossibleMoves(this.boardData);
             for (let possibleMove of possibleMoves) {
-                // console.log(possibleMove);  
                 const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
                 // Giving a 'eatable' enemy a color
                 if (this.boardData.isPlayer(possibleMove[0], possibleMove[1], piece.getOpponent())) {
@@ -49,14 +48,12 @@ class Game {
             
             if (possibleMove[0] === row && possibleMove[1] === col) {
                 // There is a legal move
-                // console.log(this.boardData.pieces.length);
                 // If new (row,col) cell had enemy, enemy piece is removed 
                 const removedPiece = this.boardData.getPiece(row, col);
                 this.boardData.removePiece(row, col);
                 if (removedPiece !== undefined && removedPiece.type === KING){
                     this.winnerAnnounce(removedPiece);
                 } 
-                // console.log(this.boardData.pieces.length);
                 piece.row = row;
                 piece.col = col;
                 this.currentPlayer = piece.getOpponent();
@@ -67,9 +64,10 @@ class Game {
     }
 
     getPossibleMoves(piece) {
+        /* 'if' block executed only when selected piece isn't current
+        player's piece, or when a winner has been chosen*/
         if (this.currentPlayer !== piece.player) {
             return [];
-            console.log("xxx");
         }
         return piece.getPossibleMoves(this.boardData);
     }
@@ -77,12 +75,17 @@ class Game {
     winnerAnnounce(removedPiece) {
         let winnerStr = removedPiece.getOpponent();
         winnerStr = winnerStr.charAt(0).toUpperCase() + winnerStr.slice(1);
-        alert( "Checkmate.\n" + winnerStr + " team won!");
+        //winnerText - global from app.js
+        winnerText = "Checkmate.\n" + winnerStr + " team won!";
+        /* The above action will start an 'if' statement in
+        app.js's createChessBoard(), adding a 'You Win!' popup
+        Also will delete onCellClick's further actions */
     }
+
     checkTest() {
         // TODO: create an algorithm that calculates if any player's king is within reach
         // tl;dr - CHECKMATE
-        
+
     }
 
 }

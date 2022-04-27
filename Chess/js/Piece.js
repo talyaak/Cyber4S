@@ -22,6 +22,8 @@ class Piece {
       let moves;
       const pieceType = this.type.charAt(0).toUpperCase() + this.type.slice(1);
       moves = "this.get" + pieceType + "Moves(boardData);"
+      /* 'eval' method - hack susceptible!
+      not recommended at all but used for the sake of code shortage */
       moves = eval(moves);
     
 
@@ -34,7 +36,6 @@ class Piece {
           filteredMoves.push(absoluteMove);
         }
       }
-    //   console.log('filteredMoves', filteredMoves);
       return filteredMoves;
     }
   
@@ -50,14 +51,11 @@ class Piece {
           result.push([row, col]);
         } else if (boardData.isPlayer(row, col, opponent)) {
           result.push([row, col]);
-          // console.log("met opponent");
           return result;
         } else if (boardData.isPlayer(row, col, player)) {
-          // console.log("met player");
           return result;
         }
       }
-      // console.log("all empty cells");
       return result;
     }
   
