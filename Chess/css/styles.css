@@ -35,7 +35,7 @@ h1 {
 button {
   margin: 1rem;
   width: 30vw;
-  height: 5vw;
+  height: 6vw;
   font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 2vw;
   text-transform: uppercase;
@@ -76,8 +76,8 @@ button:hover {
   background: #8ba2c0;
 }
 .dark-cell, .light-cell {
-  width: 5vw;
-  height: 5.5vw;
+  min-width: 4vw;
+  height: 5vw;
 }
 
 .selected {
@@ -89,7 +89,7 @@ button:hover {
 .enemy {
   background-color: #e90f0f;
 }
-.winner-msg, .start-button {
+.winner-msg {
   background-color: #ffffff;
   position: absolute;
   left: 50%;
@@ -103,4 +103,7 @@ button:hover {
   font-weight: bold;
   font-size: 2.5vw;
   display: inline-block;
+}
+.start-button {
+  margin-top: 25%;
 }
